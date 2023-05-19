@@ -1,41 +1,55 @@
 package com.example.finalproject;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.res.AssetManager;
+import android.content.res.Resources;
 import android.graphics.Rect;
+import android.graphics.drawable.Drawable;
+import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Random;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
-public class Stone{
-    private FrameLayout gameLayout;
-    private ImageView stoneImage;
+import kotlin.RequiresOptIn;
 
-    private Rect bounds = new Rect();
+@SuppressLint("AppCompatCustomView")
+public class Stone extends ImageView {
+    private Rect bounds;
+    private float speed = 0f;
 
-    private Random random;
+    public Stone(Context context) {
+        super(context);
 
-    public Stone(FrameLayout gameLayout) {
-        this.gameLayout = gameLayout;
+        setLayoutParams(new ViewGroup.LayoutParams(150, 150));
 
+        bounds = new Rect(
+                (int) getX(),
+                (int) getY(),
+                (int) getX() + getLayoutParams().width,
+                (int) getY() + getLayoutParams().height
+        );
     }
 
-    private float x = 0f;
-    private float y = 0f;
-
-    public float moveDown() {
-        this.y -= 10;
-        return y;
+    public void setSpeed(float speed) {
+        this.speed = speed;
     }
 
-    public void spawnStones() {
-        stoneImage = new ImageView(gameLayout.getContext());
-        random = new Random();
+    public float getSpeed() {
+        return speed;
+    }
 
-        x = random.nextInt(gameLayout.getWidth() - gameLayout.getWidth());
+    public void moveStone() {
+        this.setY(this.getY() + speed);
+    }
 
-        stoneImage.setX(x);
-        stoneImage.setY(y);
-        gameLayout.addView(stoneImage);
+    public Rect getBounds() {
+        return bounds;
     }
 }
