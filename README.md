@@ -1,5 +1,5 @@
 # Upload all Assets
-All images .jpeg, .png, .gif, etc.
+- All images .jpeg, .png, .gif, etc.
 
 # NOTE
 - You must upload the file with NO SPACES. 
