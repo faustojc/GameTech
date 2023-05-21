@@ -2,9 +2,6 @@ package com.example.finalproject;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
 import android.graphics.RectF;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -16,27 +13,27 @@ public class Player extends ImageView {
     public static final int DIRECTION_RIGHT = 2;
 
     private final ViewGroup.LayoutParams gameFrameLayout;
-    private ImageView source;
-    private RectF bounds;
+    private final ViewGroup.LayoutParams groundLayoutParams;
+    private final RectF bounds;
     private int currDirection = DIRECTION_NONE;
     private int prevDirection = DIRECTION_NONE;
     private final float speed = 20f;
     private int x = 0;
 
-    // for debuging
-    private Paint paint = new Paint();
-
     public Player(Context context) {
         super(context);
         gameFrameLayout = null;
+        groundLayoutParams = null;
+        bounds = null;
     }
 
-    public Player(Context context, ViewGroup.LayoutParams gameFrameLayout, ImageView source) {
+    public Player(Context context, ViewGroup.LayoutParams gameFrameLayout, ViewGroup.LayoutParams groundLayoutParams,ImageView source) {
         super(context);
         this.gameFrameLayout = gameFrameLayout;
-        this.source = source;
+        this.groundLayoutParams = groundLayoutParams;
 
         setLayoutParams(source.getLayoutParams());
+        setAdjustViewBounds(true);
 
         setX(source.getX());
         setY(source.getY());
@@ -44,16 +41,8 @@ public class Player extends ImageView {
         bounds = new RectF(source.getDrawable().getBounds());
         getImageMatrix().mapRect(bounds);
         bounds.round(source.getDrawable().getBounds());
-    }
 
-    @Override
-    protected void onDraw(Canvas canvas) {
-        super.onDraw(canvas);
-
-        paint.setColor(Color.GREEN);
-        paint.setStyle(Paint.Style.STROKE);
-        paint.setStrokeWidth(6);
-        canvas.drawRect(bounds, paint);
+        bounds.set(getX(), getY(), getX() + getWidth(), getY() + getHeight());
     }
 
     public float moveLeft() {
@@ -61,6 +50,8 @@ public class Player extends ImageView {
         if (x > gameFrameLayout.width - getLayoutParams().width) {
             x = gameFrameLayout.width - getLayoutParams().width;
         }
+        bounds.set(x, getY(), x + getLayoutParams().width, getY() + getLayoutParams().height);
+
         return x;
     }
 
@@ -70,6 +61,8 @@ public class Player extends ImageView {
         if (x < 0) {
             x = 0;
         }
+        bounds.set(x, getY(), x + getLayoutParams().width, getY() + getLayoutParams().height);
+
         return x;
     }
 
@@ -91,5 +84,11 @@ public class Player extends ImageView {
 
     public int getPrevDirection() {
         return prevDirection;
+    }
+
+    public void resetPosition() {
+        setX(groundLayoutParams.width / 2f);
+
+        bounds.set(getX(), getY(), getX() + getWidth(), getY() + getHeight());
     }
 }
