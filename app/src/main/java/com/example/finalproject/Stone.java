@@ -31,7 +31,6 @@ public class Stone extends ImageView {
         // Initialize the stone resource
         setImageDrawable(ResourcesCompat.getDrawable(context.getResources(), resourceId, null));
         setBackgroundColor(Color.TRANSPARENT);
-        setAdjustViewBounds(true);
         setY(-30);
         setSpeed(3 + random.nextFloat() * (25 - 3));
         setScaleType(ScaleType.CENTER_CROP);
@@ -40,7 +39,7 @@ public class Stone extends ImageView {
         getImageMatrix().mapRect(bounds);
         bounds.round(getDrawable().getBounds());
 
-        bounds.set(getX(), getY(), getX() + getWidth(), getY() + getHeight());
+        bounds.set(getX(), getY(), getX() + getLayoutParams().width, getY() + getLayoutParams().height);
     }
 
     public void setSpeed(float speed) {
