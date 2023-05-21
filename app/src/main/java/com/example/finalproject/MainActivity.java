@@ -198,7 +198,7 @@ public class MainActivity extends AppCompatActivity {
         BitmapDrawable bitmapDrawable = new BitmapDrawable(getResources(), bitmapTexture);
 
         bitmapDrawable.setTileModeXY(Shader.TileMode.REPEAT, Shader.TileMode.REPEAT);
-        ground.setBackground(bitmapDrawable);
+        ground.setImageDrawable(bitmapDrawable);
 
         try {
             Field[] drawableFiles = R.drawable.class.getFields();
