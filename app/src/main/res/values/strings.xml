@@ -4,4 +4,5 @@
     <string name="right_button">Right</string>
     <string name="groundDesc">Ground</string>
     <string name="restart">RESTART</string>
+    <string name="gameoverDesc">WHY YOU DIE?</string>
 </resources>

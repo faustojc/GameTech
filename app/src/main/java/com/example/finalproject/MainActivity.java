@@ -19,6 +19,7 @@ import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -34,6 +35,7 @@ public class MainActivity extends AppCompatActivity {
     private ImageView playerImage;
 
     private ImageView gameoverImageView;
+    private TextView gameoverText;
 
     private Player player;
     private final ArrayList<Stone> spawnedStones = new ArrayList<>();
@@ -84,6 +86,7 @@ public class MainActivity extends AppCompatActivity {
         // Get the id of components
         gameLayout = findViewById(R.id.gameFrameLayout);
         gameoverImageView = findViewById(R.id.gameover);
+        gameoverText = findViewById(R.id.gameoverText);
         ground = findViewById(R.id.ground);
         playerImage = findViewById(R.id.player);
         leftButton = findViewById(R.id.leftButton);
@@ -122,6 +125,7 @@ public class MainActivity extends AppCompatActivity {
         // Reset game state
         restartButton.setOnClickListener(view -> {
             gameoverImageView.setVisibility(View.INVISIBLE);
+            gameoverText.setVisibility(View.INVISIBLE);
             leftButton.setEnabled(true);
             rightButton.setEnabled(true);
             restartButton.setVisibility(View.INVISIBLE);
@@ -176,6 +180,7 @@ public class MainActivity extends AppCompatActivity {
 
                 // Stop the game
                 gameoverImageView.setVisibility(View.VISIBLE);
+                gameoverText.setVisibility(View.VISIBLE);
                 restartButton.setVisibility(View.VISIBLE);
                 timer.cancel();
                 spawnHandler.removeCallbacks(spawnRunnable);

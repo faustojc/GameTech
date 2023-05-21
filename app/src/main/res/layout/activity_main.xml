@@ -81,4 +81,23 @@
         app:layout_constraintTop_toBottomOf="@+id/gameFrameLayout"
         app:layout_constraintVertical_bias="0.371" />
 
+    <TextView
+        android:id="@+id/gameoverText"
+        android:layout_width="366dp"
+        android:layout_height="76dp"
+        android:backgroundTint="@color/error"
+        android:rotation="-8"
+        android:text="@string/gameoverDesc"
+        android:textAlignment="center"
+        android:textColor="@color/error"
+        android:textSize="48sp"
+        android:textStyle="bold"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.537"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.250" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
