@@ -25,12 +25,13 @@
             android:layout_height="68dp"
             android:layout_gravity="bottom"
             android:contentDescription="@string/groundDesc"
-            android:scaleType="centerInside" />
+            android:scaleType="centerCrop" />
 
         <ImageView
             android:id="@+id/player"
-            android:layout_width="88dp"
+            android:layout_width="52dp"
             android:layout_height="85dp"
+            android:scaleType="centerCrop"
             app:srcCompat="@drawable/jarl_left_idle" />
 
         <ImageView
