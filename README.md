@@ -1,5 +1,5 @@
 # Upload all Assets
-- All images .jpeg, .png, .gif, etc.
+- Upload all images except .gif to <code>app/src/main/res/drawable</code> folder
 
 # NOTE
 - You must upload the file with NO SPACES. 
