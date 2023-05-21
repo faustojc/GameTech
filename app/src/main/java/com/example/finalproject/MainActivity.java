@@ -10,6 +10,7 @@ import android.graphics.Shader;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.HandlerThread;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
@@ -50,13 +51,14 @@ public class MainActivity extends AppCompatActivity {
 
     private final ArrayList<Integer> batoIDs = new ArrayList<>();
 
-    private final Handler handler = new Handler();
+    private final HandlerThread handlerThread = new HandlerThread("spawnStones");
+    private Handler spawnHandler;
     private final Runnable spawnRunnable = new Runnable() {
         @Override
         public void run() {
             long delayMillis = random.nextInt(1000 - 300) + 300L;
 
-            handler.postDelayed(this, delayMillis);
+            spawnHandler.postDelayed(this, delayMillis);
             Log.d(getClass().getName(), "----- spawn stones called -----");
             spawnStones();
         }
@@ -89,6 +91,9 @@ public class MainActivity extends AppCompatActivity {
         playerImage.setX(groundLayoutParams.width / 2f);
         playerImage.setY((float) gameLayoutParams.height - (float) groundLayoutParams.height - playerImage.getLayoutParams().height);
 
+        handlerThread.start();
+        spawnHandler = new Handler(handlerThread.getLooper());
+
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
@@ -100,7 +105,7 @@ public class MainActivity extends AppCompatActivity {
         }, 0, 20);
 
         buttonMovePlayer();
-        handler.post(spawnRunnable);
+        spawnHandler.post(spawnRunnable);
 
         // Reset game state
         restartButton.setOnClickListener(view -> {
@@ -130,14 +135,14 @@ public class MainActivity extends AppCompatActivity {
                 }
             }, 0, 20);
 
-            handler.post(spawnRunnable);
+            spawnHandler.post(spawnRunnable);
         });
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        handler.removeCallbacks(spawnRunnable);
+        spawnHandler.removeCallbacks(spawnRunnable);
         timer.cancel();
     }
 
@@ -161,7 +166,7 @@ public class MainActivity extends AppCompatActivity {
                 gameoverImageView.setVisibility(View.VISIBLE);
                 restartButton.setVisibility(View.VISIBLE);
                 timer.cancel();
-                handler.removeCallbacks(spawnRunnable);
+                spawnHandler.removeCallbacks(spawnRunnable);
                 leftButton.setEnabled(false);
                 rightButton.setEnabled(false);
 
