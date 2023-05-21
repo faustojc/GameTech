@@ -18,7 +18,6 @@ public class Player extends ImageView {
     private int currDirection = DIRECTION_NONE;
     private int prevDirection = DIRECTION_NONE;
     private final float speed = 20f;
-    private int x = 0;
 
     public Player(Context context) {
         super(context);
@@ -46,24 +45,25 @@ public class Player extends ImageView {
     }
 
     public float moveLeft() {
-        x += speed;
-        if (x > gameFrameLayout.width - getLayoutParams().width) {
-            x = gameFrameLayout.width - getLayoutParams().width;
-        }
-        bounds.set(x, getY(), x + getLayoutParams().width, getY() + getLayoutParams().height);
+        setX(getX() + speed);
 
-        return x;
+        if (getX() > gameFrameLayout.width - getLayoutParams().width) {
+            setX((float) gameFrameLayout.width - getLayoutParams().width);
+        }
+        bounds.set(getX(), getY(), getX() + getLayoutParams().width, getY() + getLayoutParams().height);
+
+        return getX();
     }
 
     public float moveRight() {
-        x -= speed;
+        setX(getX() - speed);
 
-        if (x < 0) {
-            x = 0;
+        if (getX() < 0) {
+            setX(0);
         }
-        bounds.set(x, getY(), x + getLayoutParams().width, getY() + getLayoutParams().height);
+        bounds.set(getX(), getY(), getX() + getLayoutParams().width, getY() + getLayoutParams().height);
 
-        return x;
+        return getX();
     }
 
     public void setCurrDirection(int currDirection) {
@@ -89,6 +89,6 @@ public class Player extends ImageView {
     public void resetPosition() {
         setX(groundLayoutParams.width / 2f);
 
-        bounds.set(getX(), getY(), getX() + getWidth(), getY() + getHeight());
+        bounds.set(getX(), getY(), getX() + getLayoutParams().width, getY() + getLayoutParams().height);
     }
 }

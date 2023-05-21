@@ -116,10 +116,9 @@ public class MainActivity extends AppCompatActivity {
             // Remove all stones
             spawnedStones.clear();
 
-            // Reset player position and its source ImageView
+            // Reset player position X and its source ImageView
             player.resetPosition();
             playerImage.setX(player.getX());
-            playerImage.setY(player.getY());
 
             // Start game again
             timer = new Timer();
