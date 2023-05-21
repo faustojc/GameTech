@@ -2,39 +2,55 @@ package com.example.finalproject;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.res.AssetManager;
-import android.content.res.Resources;
-import android.graphics.Rect;
-import android.graphics.drawable.Drawable;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.RectF;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Random;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import androidx.core.content.res.ResourcesCompat;
 
-import kotlin.RequiresOptIn;
+import java.util.Random;
 
 @SuppressLint("AppCompatCustomView")
 public class Stone extends ImageView {
-    private Rect bounds;
+    private RectF bounds;
     private float speed = 0f;
+    private final Random random = new Random();
+
+    // for debuging
+    private Paint paint = new Paint();
 
     public Stone(Context context) {
+        super(context);
+    }
+
+    public Stone(Context context, int resourceId) {
         super(context);
 
         setLayoutParams(new ViewGroup.LayoutParams(150, 150));
 
-        bounds = new Rect(
-                (int) getX(),
-                (int) getY(),
-                (int) getX() + getLayoutParams().width,
-                (int) getY() + getLayoutParams().height
-        );
+        // Initialize the stone resource
+        setImageDrawable(ResourcesCompat.getDrawable(context.getResources(), resourceId, null));
+        setBackgroundColor(Color.TRANSPARENT);
+        setY(-30);
+        setSpeed(3 + random.nextFloat() * (25 - 3));
+        setScaleType(ScaleType.CENTER_CROP);
+
+        bounds = new RectF(getDrawable().getBounds());
+        getImageMatrix().mapRect(bounds);
+        bounds.round(getDrawable().getBounds());
+    }
+
+    @Override
+    protected void onDraw(Canvas canvas) {
+        super.onDraw(canvas);
+
+        paint.setColor(Color.RED);
+        paint.setStyle(Paint.Style.STROKE);
+        paint.setStrokeWidth(6);
+        canvas.drawRect(bounds, paint);
     }
 
     public void setSpeed(float speed) {
@@ -49,7 +65,7 @@ public class Stone extends ImageView {
         this.setY(this.getY() + speed);
     }
 
-    public Rect getBounds() {
+    public RectF getBounds() {
         return bounds;
     }
 }
