@@ -60,7 +60,19 @@ public class MainActivity extends AppCompatActivity {
 
             spawnHandler.postDelayed(this, delayMillis);
             Log.d(getClass().getName(), "----- spawn stones called -----");
-            spawnStones();
+
+            // Spawn the stone in the main UI thread
+            runOnUiThread(() -> {
+                Stone randomStone = new Stone(MainActivity.this, batoIDs.get(random.nextInt(batoIDs.size())));
+
+                int x = (gameLayoutParams.width - randomStone.getLayoutParams().width <= 0) ?
+                        randomStone.getLayoutParams().width : gameLayoutParams.width - randomStone.getLayoutParams().width;
+
+                randomStone.setX(random.nextInt(x));
+
+                gameLayout.addView(randomStone);
+                spawnedStones.add(randomStone);
+            });
         }
     };
 
@@ -246,20 +258,6 @@ public class MainActivity extends AppCompatActivity {
                 player.setPrevDirection(Player.DIRECTION_RIGHT);
             }
             return true;
-        });
-    }
-
-    private void spawnStones() {
-        runOnUiThread(() -> {
-            Stone randomStone = new Stone(this, batoIDs.get(random.nextInt(batoIDs.size())));
-
-            int x = (gameLayoutParams.width - randomStone.getLayoutParams().width <= 0) ?
-                    randomStone.getLayoutParams().width : gameLayoutParams.width - randomStone.getLayoutParams().width;
-
-            randomStone.setX(random.nextInt(x));
-
-            gameLayout.addView(randomStone);
-            spawnedStones.add(randomStone);
         });
     }
 }
