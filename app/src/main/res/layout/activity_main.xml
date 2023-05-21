@@ -20,6 +20,13 @@
         app:layout_constraintVertical_bias="0.003">
 
         <ImageView
+            android:id="@+id/gameover"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="invisible"
+            app:srcCompat="@drawable/gameover" />
+
+        <ImageView
             android:id="@+id/ground"
             android:layout_width="match_parent"
             android:layout_height="68dp"
@@ -34,12 +41,6 @@
             android:scaleType="centerCrop"
             app:srcCompat="@drawable/jarl_left_idle" />
 
-        <ImageView
-            android:id="@+id/gameover"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:visibility="invisible"
-            app:srcCompat="@drawable/gameover" />
     </FrameLayout>
 
     <ImageButton
@@ -67,5 +68,17 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="1.0"
         app:srcCompat="@android:drawable/ic_media_rew" />
+
+    <Button
+        android:id="@+id/restartButton"
+        android:layout_width="143dp"
+        android:layout_height="59dp"
+        android:text="@string/restart"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/gameFrameLayout"
+        app:layout_constraintVertical_bias="0.371" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
