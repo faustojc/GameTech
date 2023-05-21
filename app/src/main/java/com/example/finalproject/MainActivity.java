@@ -6,14 +6,12 @@ import androidx.core.content.res.ResourcesCompat;
 import android.annotation.SuppressLint;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Rect;
 import android.graphics.Shader;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.MotionEvent;
-import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
@@ -24,8 +22,6 @@ import java.util.ArrayList;
 import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class MainActivity extends AppCompatActivity {
     private FrameLayout gameLayout;
@@ -34,14 +30,12 @@ public class MainActivity extends AppCompatActivity {
     private ImageView ground;
     private ImageView playerImage;
 
-    private ImageView gameover;
+    private ImageView gameoverImageView;
 
     private Player player;
     private final ArrayList<Stone> spawnedStones = new ArrayList<>();
 
     private final Random random = new Random();
-
-    private int playerCurrDirection = Player.DIRECTION_NONE;
 
     private ImageButton leftButton;
     private ImageButton rightButton;
@@ -57,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
     private final Runnable spawnRunnable = new Runnable() {
         @Override
         public void run() {
-            long delayMillis = random.nextInt(500) + 1000L;
+            long delayMillis = random.nextInt(1000 - 300) + 300L;
 
             handler.postDelayed(this, delayMillis);
             Log.d(getClass().getName(), "----- spawn stones called -----");
@@ -72,7 +66,7 @@ public class MainActivity extends AppCompatActivity {
 
         // Get the id of components
         gameLayout = findViewById(R.id.gameFrameLayout);
-        gameover = findViewById(R.id.gameover);
+        gameoverImageView = findViewById(R.id.gameover);
         ground = findViewById(R.id.ground);
         playerImage = findViewById(R.id.player);
         leftButton = findViewById(R.id.leftButton);
@@ -109,7 +103,7 @@ public class MainActivity extends AppCompatActivity {
                             spawnedStones.remove(i);
                         }
 
-                        if (Rect.intersects(s.getBounds(), player.getBounds())) {
+                        if (s.getBounds().contains(player.getBounds())) {
                             Log.d(getClass().getName(), "----- player hit -----");
 
                             //gameover.setVisibility(View.VISIBLE);
@@ -119,16 +113,21 @@ public class MainActivity extends AppCompatActivity {
                         }
                     }
 
-                    if (playerCurrDirection == Player.DIRECTION_LEFT) {
-                        playerImage.setX(player.moveLeft());
-                        playerImage.setImageDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable.jarl_move_right, null));
-                    } else if (playerCurrDirection == Player.DIRECTION_RIGHT) {
-                        playerImage.setX(player.moveRight());
-                        playerImage.setImageDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable.jarl_move_left, null));
-                    } else {
-                        if (player.getDirection() == Player.DIRECTION_LEFT) {
+                    if (leftButtonPressed || rightButtonPressed) {
+                        if (player.getCurrDirection() == Player.DIRECTION_LEFT) {
+                            playerImage.setX(player.moveLeft());
+                            playerImage.setImageDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable.jarl_move_right, null));
+                        }
+                        else if (player.getCurrDirection() == Player.DIRECTION_RIGHT) {
+                            playerImage.setX(player.moveRight());
+                            playerImage.setImageDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable.jarl_move_left, null));
+                        }
+                    }
+                    else {
+                        if (player.getPrevDirection() == Player.DIRECTION_LEFT) {
                             playerImage.setImageDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable.jarl_left_idle, null));
-                        } else if (player.getDirection() == Player.DIRECTION_RIGHT) {
+                        }
+                        else if (player.getPrevDirection() == Player.DIRECTION_RIGHT) {
                             playerImage.setImageDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable.jarl_right_idle, null));
                         }
                     }
@@ -144,6 +143,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         handler.removeCallbacks(spawnRunnable);
+        timer.cancel();
     }
 
     private void initResources() {
@@ -164,7 +164,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         } catch (IllegalAccessException e) {
-            Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, e.getMessage());
+            Log.d(this.getClass().getName(), e.getMessage());
         }
     }
 
@@ -173,11 +173,12 @@ public class MainActivity extends AppCompatActivity {
         leftButton.setOnTouchListener((v, event) -> {
             if (event.getAction() == MotionEvent.ACTION_DOWN) {
                 leftButtonPressed = true;
-                playerCurrDirection = Player.DIRECTION_LEFT;
-                player.setDirection(Player.DIRECTION_LEFT);
-            } else if (event.getAction() == MotionEvent.ACTION_UP) {
+                player.setCurrDirection(Player.DIRECTION_LEFT);
+            }
+            else if (event.getAction() == MotionEvent.ACTION_UP) {
                 leftButtonPressed = false;
-                playerCurrDirection = Player.DIRECTION_NONE;
+                player.setCurrDirection(Player.DIRECTION_NONE);
+                player.setPrevDirection(Player.DIRECTION_LEFT);
             }
             return true;
         });
@@ -185,11 +186,12 @@ public class MainActivity extends AppCompatActivity {
         rightButton.setOnTouchListener((v, event) -> {
             if (event.getAction() == MotionEvent.ACTION_DOWN) {
                 rightButtonPressed = true;
-                playerCurrDirection = Player.DIRECTION_RIGHT;
-                player.setDirection(Player.DIRECTION_RIGHT);
-            } else if (event.getAction() == MotionEvent.ACTION_UP) {
+                player.setCurrDirection(Player.DIRECTION_RIGHT);
+            }
+            else if (event.getAction() == MotionEvent.ACTION_UP) {
                 rightButtonPressed = false;
-                playerCurrDirection = Player.DIRECTION_NONE;
+                player.setCurrDirection(Player.DIRECTION_NONE);
+                player.setPrevDirection(Player.DIRECTION_RIGHT);
             }
             return true;
         });
@@ -197,15 +199,12 @@ public class MainActivity extends AppCompatActivity {
 
     private void spawnStones() {
         runOnUiThread(() -> {
-            Stone randomStone = new Stone(this);
+            Stone randomStone = new Stone(this, batoIDs.get(random.nextInt(batoIDs.size())));
 
             int x = (gameLayoutParams.width - randomStone.getLayoutParams().width <= 0) ?
                     randomStone.getLayoutParams().width : gameLayoutParams.width - randomStone.getLayoutParams().width;
 
-            randomStone.setImageResource(batoIDs.get(random.nextInt(batoIDs.size())));
             randomStone.setX(random.nextInt(x));
-            randomStone.setY(-30);
-            randomStone.setSpeed(random.nextFloat() * 3 + 25);
 
             gameLayout.addView(randomStone);
             spawnedStones.add(randomStone);
