@@ -2,7 +2,10 @@ package com.example.finalproject;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.graphics.Rect;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.RectF;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
@@ -12,30 +15,45 @@ public class Player extends ImageView {
     public static final int DIRECTION_LEFT = 1;
     public static final int DIRECTION_RIGHT = 2;
 
-    public Rect bounds;
-
-    private int direction = DIRECTION_RIGHT;
+    private final ViewGroup.LayoutParams gameFrameLayout;
+    private ImageView source;
+    private RectF bounds;
+    private int currDirection = DIRECTION_NONE;
+    private int prevDirection = DIRECTION_NONE;
     private final float speed = 20f;
-
     private int x = 0;
 
-    private final ViewGroup.LayoutParams gameFrameLayout;
+    // for debuging
+    private Paint paint = new Paint();
+
+    public Player(Context context) {
+        super(context);
+        gameFrameLayout = null;
+    }
 
     public Player(Context context, ViewGroup.LayoutParams gameFrameLayout, ImageView source) {
         super(context);
         this.gameFrameLayout = gameFrameLayout;
+        this.source = source;
 
         setLayoutParams(source.getLayoutParams());
 
         setX(source.getX());
         setY(source.getY());
 
-        bounds = new Rect(
-                (int) getX(),
-                (int) getY(),
-                (int) getX() + getLayoutParams().width,
-                (int) getY() + getLayoutParams().height
-        );
+        bounds = new RectF(source.getDrawable().getBounds());
+        getImageMatrix().mapRect(bounds);
+        bounds.round(source.getDrawable().getBounds());
+    }
+
+    @Override
+    protected void onDraw(Canvas canvas) {
+        super.onDraw(canvas);
+
+        paint.setColor(Color.GREEN);
+        paint.setStyle(Paint.Style.STROKE);
+        paint.setStrokeWidth(6);
+        canvas.drawRect(bounds, paint);
     }
 
     public float moveLeft() {
@@ -55,15 +73,23 @@ public class Player extends ImageView {
         return x;
     }
 
-    public void setDirection(int direction) {
-        this.direction = direction;
+    public void setCurrDirection(int currDirection) {
+        this.currDirection = currDirection;
     }
 
-    public int getDirection() {
-        return direction;
+    public int getCurrDirection() {
+        return currDirection;
     }
 
-    public Rect getBounds() {
+    public RectF getBounds() {
         return bounds;
+    }
+
+    public void setPrevDirection(int prevDirection) {
+        this.prevDirection = prevDirection;
+    }
+
+    public int getPrevDirection() {
+        return prevDirection;
     }
 }
