@@ -17,10 +17,6 @@ import java.util.Random;
 public class Stone extends ImageView {
     private RectF bounds;
     private float speed = 0f;
-    private final Random random = new Random();
-
-    // for debuging
-    private Paint paint = new Paint();
 
     public Stone(Context context) {
         super(context);
@@ -28,12 +24,14 @@ public class Stone extends ImageView {
 
     public Stone(Context context, int resourceId) {
         super(context);
+        Random random = new Random();
 
         setLayoutParams(new ViewGroup.LayoutParams(150, 150));
 
         // Initialize the stone resource
         setImageDrawable(ResourcesCompat.getDrawable(context.getResources(), resourceId, null));
         setBackgroundColor(Color.TRANSPARENT);
+        setAdjustViewBounds(true);
         setY(-30);
         setSpeed(3 + random.nextFloat() * (25 - 3));
         setScaleType(ScaleType.CENTER_CROP);
@@ -41,16 +39,8 @@ public class Stone extends ImageView {
         bounds = new RectF(getDrawable().getBounds());
         getImageMatrix().mapRect(bounds);
         bounds.round(getDrawable().getBounds());
-    }
 
-    @Override
-    protected void onDraw(Canvas canvas) {
-        super.onDraw(canvas);
-
-        paint.setColor(Color.RED);
-        paint.setStyle(Paint.Style.STROKE);
-        paint.setStrokeWidth(6);
-        canvas.drawRect(bounds, paint);
+        bounds.set(getX(), getY(), getX() + getWidth(), getY() + getHeight());
     }
 
     public void setSpeed(float speed) {
@@ -63,6 +53,7 @@ public class Stone extends ImageView {
 
     public void moveStone() {
         this.setY(this.getY() + speed);
+        bounds.set(getX(), getY(), getX() + getWidth(), getY() + getHeight());
     }
 
     public RectF getBounds() {
