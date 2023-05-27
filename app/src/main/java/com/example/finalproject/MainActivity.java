@@ -1,10 +1,7 @@
 package com.example.finalproject;
 
 import android.annotation.SuppressLint;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Shader;
-import android.graphics.drawable.BitmapDrawable;
+import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
@@ -12,16 +9,17 @@ import android.os.HandlerThread;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
-import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.res.ResourcesCompat;
 
 import java.lang.reflect.Field;
@@ -31,20 +29,20 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class MainActivity extends AppCompatActivity {
-    private FrameLayout gameLayout = null;
-    private ViewGroup.LayoutParams gameLayoutParams = null;
-    private ViewGroup.LayoutParams groundLayoutParams = null;
-    private ImageView ground = null;
-    private ImageView playerImage = null;
+    private ConstraintLayout gameLayout = null;
+    private Player player = null;
+    private ImageView platform = null;
     private TextView scoreText = null;
     private ImageView gameoverImageView = null;
     private TextView levelDisplay = null;
     private TextView levelText = null;
 
+    private final RectF gameLayoutBounds = new RectF();
+    private final RectF platformBounds = new RectF();
+
     private Animation fadeIn = null;
     private Animation fadeOut = null;
 
-    private Player player = null;
     private final ArrayList<Stone> spawnedStones = new ArrayList<>();
 
     private Drawable playerMoveLeft = null;
@@ -62,7 +60,6 @@ public class MainActivity extends AppCompatActivity {
 
     private boolean leftButtonPressed = false;
     private boolean rightButtonPressed = false;
-    private boolean isResourceInitialized = false;
 
     private Timer timer = new Timer();
 
@@ -84,10 +81,10 @@ public class MainActivity extends AppCompatActivity {
             runOnUiThread(() -> {
                 Stone randomStone = new Stone(MainActivity.this, batoIDs.get(random.nextInt(batoIDs.size())));
 
-                int x = (gameLayoutParams.width - randomStone.getLayoutParams().width <= 0) ?
-                        randomStone.getLayoutParams().width : gameLayoutParams.width - randomStone.getLayoutParams().width;
+                float x = (gameLayoutBounds.width() - randomStone.getBounds().width() <= 0) ?
+                        randomStone.getBounds().width() : gameLayoutBounds.width() - randomStone.getLayoutParams().width;
 
-                randomStone.setX(random.nextInt(x));
+                randomStone.setX(random.nextInt((int) x));
 
                 gameLayout.addView(randomStone);
                 spawnedStones.add(randomStone);
@@ -128,79 +125,76 @@ public class MainActivity extends AppCompatActivity {
 
         // Initialize resources first
         initResources();
+    }
 
-        if (isResourceInitialized) {
-            scoreText.setText(getString(R.string.score, score));
-            levelDisplay.setText(getString(R.string.level, level));
-            levelText.setText(getString(R.string.level, level));
+    @Override
+    protected void onPostCreate(@Nullable Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
 
-            gameLayoutParams = gameLayout.getLayoutParams();
-            groundLayoutParams = ground.getLayoutParams();
+        levelDisplay.setAnimation(fadeIn);
+        scoreText.setText(getString(R.string.score, score));
+        levelDisplay.setText(getString(R.string.level, level));
+        levelText.setText(getString(R.string.level, level));
 
-            // Initialize the player
-            player = new Player(playerImage.getContext(), gameLayoutParams, groundLayoutParams, playerImage);
+        // Using the ViewTreeObserver to get the View's measurement that has already been measured and laid out
+        ViewTreeObserver.OnGlobalLayoutListener gameLayoutListener = new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                gameLayout.getViewTreeObserver().removeOnGlobalLayoutListener(this);
 
-            playerImage.setX(player.getX());
-            playerImage.setY(player.getY());
+                gameLayoutBounds.set(
+                        gameLayout.getLeft(),
+                        gameLayout.getTop(),
+                        gameLayout.getRight(),
+                        gameLayout.getBottom()
+                );
 
-            // Set the handler thread
-            handlerThread.start();
-            spawnHandler = new Handler(handlerThread.getLooper());
-            scoreHandler = new Handler(handlerThread.getLooper());
+                player.setParentBounds(gameLayoutBounds);
+            }
+        };
 
-            timer.schedule(new TimerTask() {
-                @Override
-                public void run() {
-                    // TODO: optimize
+        ViewTreeObserver.OnGlobalLayoutListener platformLayoutListener = new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                platform.getViewTreeObserver().removeOnGlobalLayoutListener(this);
 
-                    // Run the game in the main UI thread
-                    runOnUiThread(() -> runGame());
-                }
-            }, 0, 20);
+                platformBounds.set(
+                        platform.getLeft(),
+                        platform.getTop(),
+                        platform.getRight(),
+                        platform.getBottom()
+                );
+            }
+        };
 
-            buttonMovePlayer();
-            spawnHandler.post(spawnRunnable);
-            scoreHandler.post(scoreRunnable);
+        ViewTreeObserver.OnGlobalLayoutListener playerLayoutListener = () -> player.getBounds().set(player.getX(), player.getY(), player.getX() + player.getWidth(), player.getY() + player.getHeight());
 
-            // Reset game state on click
-            restartButton.setOnClickListener(view -> {
-                score = 0;
-                level = 0;
+        gameLayout.getViewTreeObserver().addOnGlobalLayoutListener(gameLayoutListener);
+        platform.getViewTreeObserver().addOnGlobalLayoutListener(platformLayoutListener);
+        player.getViewTreeObserver().addOnGlobalLayoutListener(playerLayoutListener);
 
-                scoreText.setText(getString(R.string.score, score));
-                levelDisplay.setText(getString(R.string.level, level));
-                levelText.setText(getString(R.string.level, level));
+        player.setLayoutParams(player.getLayoutParams());
+        player.setImageDrawable(playerIdleRight);
+        player.setOriginalPosX(player.getX());
 
-                gameoverImageView.setVisibility(View.INVISIBLE);
-                leftButton.setEnabled(true);
-                rightButton.setEnabled(true);
-                restartButton.setVisibility(View.INVISIBLE);
+        // Set the handler thread
+        handlerThread.start();
+        spawnHandler = new Handler(handlerThread.getLooper());
+        scoreHandler = new Handler(handlerThread.getLooper());
 
-                for (Stone stone : spawnedStones) {
-                    gameLayout.removeView(stone);
-                }
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                // TODO: optimize
 
-                // Remove all stones
-                spawnedStones.clear();
+                // Run the game in the main UI thread
+                runOnUiThread(() -> runGame());
+            }
+        }, 0, 20);
 
-                // Reset player position X and its source ImageView
-                player.resetPosition();
-                playerImage.setX(player.getX());
-
-                // Start game again
-                timer = new Timer();
-                timer.schedule(new TimerTask() {
-                    @Override
-                    public void run() {
-                        // Run the game in the main UI thread
-                        runOnUiThread(() -> runGame());
-                    }
-                }, 0, 20);
-
-                spawnHandler.post(spawnRunnable);
-                scoreHandler.post(scoreRunnable);
-            });
-        }
+        setButtonsListener();
+        spawnHandler.post(spawnRunnable);
+        scoreHandler.post(scoreRunnable);
     }
 
     @Override
@@ -220,7 +214,7 @@ public class MainActivity extends AppCompatActivity {
             s.moveStone();
             s.setRotation(s.getRotation() + s.getSpeed());
 
-            if ((s.getY() + s.getHeight()) >= (gameLayoutParams.height - groundLayoutParams.height)) {
+            if (s.getBounds().intersect(platformBounds)) {
                 gameLayout.removeView(s);
                 spawnedStones.remove(i);
             }
@@ -250,20 +244,20 @@ public class MainActivity extends AppCompatActivity {
         // Move the player
         if (leftButtonPressed || rightButtonPressed) {
             if (player.getCurrDirection() == Player.DIRECTION_LEFT) {
-                playerImage.setX(player.moveLeft());
-                playerImage.setImageDrawable(playerMoveLeft);
+                player.moveLeft();
+                player.setImageDrawable(playerMoveLeft);
             }
             else if (player.getCurrDirection() == Player.DIRECTION_RIGHT) {
-                playerImage.setX(player.moveRight());
-                playerImage.setImageDrawable(playerMoveRight);
+                player.moveRight();
+                player.setImageDrawable(playerMoveRight);
             }
         }
         else {
             if (player.getPrevDirection() == Player.DIRECTION_LEFT) {
-                playerImage.setImageDrawable(playerIdleLeft);
+                player.setImageDrawable(playerIdleLeft);
             }
             else if (player.getPrevDirection() == Player.DIRECTION_RIGHT) {
-                playerImage.setImageDrawable(playerIdleRight);
+                player.setImageDrawable(playerIdleRight);
             }
         }
     }
@@ -275,8 +269,8 @@ public class MainActivity extends AppCompatActivity {
         levelDisplay = findViewById(R.id.levelDisplay);
         levelText = findViewById(R.id.levelText);
         scoreText = findViewById(R.id.scoreText);
-        ground = findViewById(R.id.ground);
-        playerImage = findViewById(R.id.player);
+        platform = findViewById(R.id.platform);
+        player = findViewById(R.id.player);
         leftButton = findViewById(R.id.leftButton);
         rightButton = findViewById(R.id.rightButton);
         restartButton = findViewById(R.id.restartButton);
@@ -285,19 +279,11 @@ public class MainActivity extends AppCompatActivity {
         fadeIn = AnimationUtils.loadAnimation(this, R.anim.fade_in);
         fadeOut = AnimationUtils.loadAnimation(this, R.anim.fade_out);
 
-        levelDisplay.setAnimation(fadeIn);
-
         // Get player drawable movement states
         playerMoveLeft = ResourcesCompat.getDrawable(getResources(), R.drawable.jarl_move_left, null);
         playerMoveRight = ResourcesCompat.getDrawable(getResources(), R.drawable.jarl_move_right, null);
         playerIdleRight = ResourcesCompat.getDrawable(getResources(), R.drawable.jarl_idle_right, null);
         playerIdleLeft = ResourcesCompat.getDrawable(getResources(), R.drawable.jarl_idle_left, null);
-
-        Bitmap bitmapTexture = BitmapFactory.decodeResource(getResources(), R.drawable.ground);
-        BitmapDrawable bitmapDrawable = new BitmapDrawable(getResources(), bitmapTexture);
-
-        bitmapDrawable.setTileModeXY(Shader.TileMode.REPEAT, Shader.TileMode.REPEAT);
-        ground.setBackground(bitmapDrawable);
 
         try {
             Field[] drawableFiles = R.drawable.class.getFields();
@@ -312,12 +298,10 @@ public class MainActivity extends AppCompatActivity {
         } catch (IllegalAccessException e) {
             Log.d(this.getClass().getName(), e.getMessage());
         }
-
-        isResourceInitialized = true;
     }
 
     @SuppressLint("ClickableViewAccessibility")
-    private void buttonMovePlayer() {
+    private void setButtonsListener() {
         rightButton.setOnTouchListener((view, event) -> {
             if (view.getId() == R.id.rightButton) {
                 if (event.getAction() == MotionEvent.ACTION_DOWN) {
@@ -348,6 +332,44 @@ public class MainActivity extends AppCompatActivity {
             }
 
             return false;
+        });
+
+        // Reset game state on click
+        restartButton.setOnClickListener(view -> {
+            score = 0;
+            level = 0;
+
+            scoreText.setText(getString(R.string.score, score));
+            levelDisplay.setText(getString(R.string.level, level));
+            levelText.setText(getString(R.string.level, level));
+
+            gameoverImageView.setVisibility(View.INVISIBLE);
+            leftButton.setEnabled(true);
+            rightButton.setEnabled(true);
+            restartButton.setVisibility(View.INVISIBLE);
+
+            for (Stone stone : spawnedStones) {
+                gameLayout.removeView(stone);
+            }
+
+            // Remove all stones
+            spawnedStones.clear();
+
+            // Reset player position X and its source ImageView
+            player.resetPosition();
+
+            // Start game again
+            timer = new Timer();
+            timer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    // Run the game in the main UI thread
+                    runOnUiThread(() -> runGame());
+                }
+            }, 0, 20);
+
+            spawnHandler.post(spawnRunnable);
+            scoreHandler.post(scoreRunnable);
         });
     }
 }
