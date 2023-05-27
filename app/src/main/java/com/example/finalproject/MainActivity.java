@@ -167,7 +167,20 @@ public class MainActivity extends AppCompatActivity {
             }
         };
 
-        ViewTreeObserver.OnGlobalLayoutListener playerLayoutListener = () -> player.getBounds().set(player.getX(), player.getY(), player.getX() + player.getWidth(), player.getY() + player.getHeight());
+        ViewTreeObserver.OnGlobalLayoutListener playerLayoutListener = new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                player.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+
+                float centerX = player.getX() + player.getWidth() / 2f;
+                float centerY = player.getY() + player.getHeight() / 2f;
+                float radiusX = player.getWidth() / 2f;
+                float radiusY = player.getHeight() / 2f;
+
+                player.getBounds().set(centerX - radiusX, centerY - radiusY, centerX + radiusX, centerY + radiusY);
+                player.setOriginalPosX(player.getX());
+            }
+        };
 
         gameLayout.getViewTreeObserver().addOnGlobalLayoutListener(gameLayoutListener);
         platform.getViewTreeObserver().addOnGlobalLayoutListener(platformLayoutListener);
@@ -175,7 +188,6 @@ public class MainActivity extends AppCompatActivity {
 
         player.setLayoutParams(player.getLayoutParams());
         player.setImageDrawable(playerIdleRight);
-        player.setOriginalPosX(player.getX());
 
         // Set the handler thread
         handlerThread.start();

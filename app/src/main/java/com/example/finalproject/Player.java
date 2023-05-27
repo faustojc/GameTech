@@ -2,10 +2,6 @@ package com.example.finalproject;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.Path;
 import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.widget.ImageView;
@@ -17,7 +13,7 @@ public class Player extends ImageView {
     public static final int DIRECTION_RIGHT = 2;
 
     private RectF gameLayoutBounds = new RectF();
-    private final RectF bounds;
+    private final RectF bounds = new RectF();
     private final float speed = 20f;
 
     private int currDirection = DIRECTION_NONE;
@@ -26,34 +22,14 @@ public class Player extends ImageView {
 
     public Player(Context context) {
         super(context);
-        bounds = new RectF();
     }
 
     public Player(Context context, AttributeSet attrs) {
         super(context, attrs);
-        bounds = new RectF();
     }
 
     public Player(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
-        bounds = new RectF();
-    }
-
-    @Override
-    protected void onDraw(Canvas canvas) {
-        super.onDraw(canvas);
-
-        Paint paint = new Paint();
-        Path path = new Path();
-
-        paint.setColor(Color.GREEN);
-        paint.setStyle(Paint.Style.STROKE);
-        paint.setStrokeWidth(7);
-
-        path.addRect(bounds, Path.Direction.CW);
-
-        canvas.clipPath(path);
-        canvas.drawPath(path, paint);
     }
 
     public void moveLeft() {
@@ -63,7 +39,11 @@ public class Player extends ImageView {
             setX(0);
         }
 
-        bounds.set(getX(), getY(), getX() + getWidth(), getY() + getHeight());
+        float centerX = getX() + getWidth() / 2f;
+        float centerY = getY() + getHeight() / 2f;
+        float radiusX = getWidth() / 2f;
+        float radiusY = getHeight() / 2f;
+        bounds.set(centerX - radiusX, centerY - radiusY, centerX + radiusX, centerY + radiusY);
     }
 
     public void moveRight() {
@@ -73,8 +53,13 @@ public class Player extends ImageView {
             setX(gameLayoutBounds.width() - bounds.width());
         }
 
-        bounds.set(getX(), getY(), getX() + getWidth(), getY() + getHeight());
+        float centerX = getX() + getWidth() / 2f;
+        float centerY = getY() + getHeight() / 2f;
+        float radiusX = getWidth() / 2f;
+        float radiusY = getHeight() / 2f;
+        bounds.set(centerX - radiusX, centerY - radiusY, centerX + radiusX, centerY + radiusY);
     }
+
 
     public void setCurrDirection(int currDirection) {
         this.currDirection = currDirection;
