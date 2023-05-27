@@ -42,6 +42,7 @@ public class MainActivity extends AppCompatActivity {
 
     private Animation fadeIn = null;
     private Animation fadeOut = null;
+    private boolean isAnimating = false;
 
     private final ArrayList<Stone> spawnedStones = new ArrayList<>();
 
@@ -110,8 +111,11 @@ public class MainActivity extends AppCompatActivity {
                     levelDisplay.startAnimation(fadeIn);
                 }
 
-                if (levelDisplay.getAnimation().hasEnded()) {
+                if (levelDisplay.getAnimation() == fadeIn && levelDisplay.getAnimation().hasEnded()) {
                     levelDisplay.startAnimation(fadeOut);
+                }
+                else if (levelDisplay.getAnimation() == fadeOut && levelDisplay.getAnimation().hasEnded()) {
+                    levelDisplay.setAnimation(null);
                     levelDisplay.setAlpha(0.0f);
                 }
             });
@@ -131,7 +135,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onPostCreate(@Nullable Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
 
-        levelDisplay.setAnimation(fadeIn);
         scoreText.setText(getString(R.string.score, score));
         levelDisplay.setText(getString(R.string.level, level));
         levelText.setText(getString(R.string.level, level));
@@ -243,6 +246,7 @@ public class MainActivity extends AppCompatActivity {
                 scoreHandler.removeCallbacks(scoreRunnable);
                 timer.cancel();
 
+                levelDisplay.setAnimation(null);
                 leftButton.setEnabled(false);
                 rightButton.setEnabled(false);
 
