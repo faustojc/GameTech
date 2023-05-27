@@ -32,35 +32,36 @@ public class Player extends ImageView {
         this.groundLayoutParams = groundLayoutParams;
 
         setLayoutParams(source.getLayoutParams());
-        setAdjustViewBounds(true);
 
-        setX(source.getX());
-        setY(source.getY());
+        setX(groundLayoutParams.width / 2f);
+        setY((float) gameFrameLayout.height - (float) groundLayoutParams.height - source.getLayoutParams().height);
 
         bounds = new RectF(source.getDrawable().getBounds());
         getImageMatrix().mapRect(bounds);
         bounds.round(source.getDrawable().getBounds());
 
-        bounds.set(getX(), getY(), getX() + getWidth(), getY() + getHeight());
+        bounds.set(getX(), getY(), getX() + getLayoutParams().width, getY() + getLayoutParams().height);
     }
 
     public float moveLeft() {
-        setX(getX() + speed);
+        setX(getX() - speed);
 
-        if (getX() > gameFrameLayout.width - getLayoutParams().width) {
-            setX((float) gameFrameLayout.width - getLayoutParams().width);
+        if (getX() < 0) {
+            setX(0);
         }
+
         bounds.set(getX(), getY(), getX() + getLayoutParams().width, getY() + getLayoutParams().height);
 
         return getX();
     }
 
     public float moveRight() {
-        setX(getX() - speed);
+        setX(getX() + speed);
 
-        if (getX() < 0) {
-            setX(0);
+        if (getX() > gameFrameLayout.width - getLayoutParams().width) {
+            setX((float) gameFrameLayout.width - getLayoutParams().width);
         }
+
         bounds.set(getX(), getY(), getX() + getLayoutParams().width, getY() + getLayoutParams().height);
 
         return getX();

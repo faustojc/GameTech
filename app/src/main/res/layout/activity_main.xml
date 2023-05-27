@@ -11,10 +11,10 @@
     <FrameLayout
         android:id="@+id/gameFrameLayout"
         android:layout_width="410dp"
-        android:layout_height="415dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_height="528dp"
+        app:layout_constraintBottom_toTopOf="@+id/controlButtons"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.428"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.003">
@@ -39,65 +39,75 @@
             android:layout_width="52dp"
             android:layout_height="85dp"
             android:scaleType="centerCrop"
-            app:srcCompat="@drawable/jarl_left_idle" />
+            android:visibility="visible"
+            app:srcCompat="@drawable/jarl_idle_right" />
+
+        <TextView
+            android:id="@+id/scoreText"
+            android:layout_width="184dp"
+            android:layout_height="37dp"
+            android:text="@string/score"
+            android:textSize="20sp" />
+
+        <TextView
+            android:id="@+id/levelText"
+            android:layout_width="184dp"
+            android:layout_height="37dp"
+            android:layout_gravity="end"
+            android:text="@string/level"
+            android:textAlignment="viewEnd"
+            android:textSize="20sp" />
+
+        <TextView
+            android:id="@+id/levelDisplay"
+            android:layout_width="366dp"
+            android:layout_height="76dp"
+            android:layout_gravity="center_horizontal|center_vertical"
+            android:alpha="0"
+            android:backgroundTint="@color/gameover"
+            android:clickable="false"
+            android:gravity="center_horizontal|center_vertical"
+            android:text="@string/level"
+            android:textAlignment="center"
+            android:textColor="@color/gameover"
+            android:textSize="48sp"
+            android:textStyle="bold"
+            android:visibility="visible"
+            app:autoSizeTextType="uniform" />
 
     </FrameLayout>
 
-    <ImageButton
-        android:id="@+id/leftButton"
-        android:layout_width="130dp"
-        android:layout_height="80dp"
-        android:contentDescription="@string/left_button"
+    <LinearLayout
+        android:id="@+id/controlButtons"
+        android:layout_width="409dp"
+        android:layout_height="79dp"
+        android:layout_marginBottom="4dp"
+        android:gravity="center"
+        android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.754"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1.0"
-        app:srcCompat="@android:drawable/ic_media_ff" />
+        app:layout_constraintStart_toStartOf="parent">
 
-    <ImageButton
-        android:id="@+id/rightButton"
-        android:layout_width="130dp"
-        android:layout_height="80dp"
-        android:contentDescription="@string/left_button"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.263"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1.0"
-        app:srcCompat="@android:drawable/ic_media_rew" />
+        <ImageButton
+            android:id="@+id/rightButton"
+            android:layout_width="130dp"
+            android:layout_height="match_parent"
+            android:contentDescription="@string/left_button"
+            app:srcCompat="@android:drawable/ic_media_rew" />
 
-    <Button
-        android:id="@+id/restartButton"
-        android:layout_width="143dp"
-        android:layout_height="59dp"
-        android:text="@string/restart"
-        android:visibility="invisible"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/gameFrameLayout"
-        app:layout_constraintVertical_bias="0.371" />
+        <Button
+            android:id="@+id/restartButton"
+            android:layout_width="130dp"
+            android:layout_height="match_parent"
+            android:text="@string/restart"
+            android:visibility="invisible" />
 
-    <TextView
-        android:id="@+id/gameoverText"
-        android:layout_width="366dp"
-        android:layout_height="76dp"
-        android:backgroundTint="@color/gameover"
-        android:rotation="-8"
-        android:text="@string/gameoverDesc"
-        android:textAlignment="center"
-        android:textColor="@color/gameover"
-        android:textSize="48sp"
-        android:textStyle="bold"
-        android:visibility="invisible"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.537"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.250" />
+        <ImageButton
+            android:id="@+id/leftButton"
+            android:layout_width="130dp"
+            android:layout_height="80dp"
+            android:contentDescription="@string/left_button"
+            app:srcCompat="@android:drawable/ic_media_ff" />
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
