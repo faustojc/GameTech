@@ -3,6 +3,7 @@ package com.example.finalproject;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.Rect;
 import android.graphics.RectF;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -35,9 +36,13 @@ public class Stone extends ImageView {
 
         bounds = new RectF(getDrawable().getBounds());
         getImageMatrix().mapRect(bounds);
-        bounds.round(getDrawable().getBounds());
+        bounds.round(new Rect((int) bounds.left, (int) bounds.top, (int) bounds.right, (int) bounds.bottom));
 
-        bounds.set(getX(), getY(), getX() + getLayoutParams().width, getY() + getLayoutParams().height);
+        // Set the bounds of the Stone to circle
+        float centerX = getLayoutParams().width / 2f;
+        float centerY = getLayoutParams().height / 2f;
+        float radius = Math.min(centerX, centerY);
+        bounds.set(centerX - radius, centerY - radius, centerX + radius, centerY + radius);
     }
 
     public void setSpeed(float speed) {
@@ -49,8 +54,14 @@ public class Stone extends ImageView {
     }
 
     public void moveStone() {
-        this.setY(this.getY() + speed);
-        bounds.set(getX(), getY(), getX() + getWidth(), getY() + getHeight());
+        setY(getY() + speed);
+
+        float centerX = getX() + getLayoutParams().width / 2f;
+        float centerY = getY() + getLayoutParams().height / 2f;
+        float radius = Math.min(getWidth(), getHeight()) / 2f;
+
+        // Update the bounds with the new coordinates
+        bounds.set(centerX - radius, centerY - radius, centerX + radius, centerY + radius);
     }
 
     public RectF getBounds() {
