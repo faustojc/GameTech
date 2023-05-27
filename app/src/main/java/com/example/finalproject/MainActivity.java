@@ -199,7 +199,7 @@ public class MainActivity extends AppCompatActivity {
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
-                // TODO: optimize
+                // TODO: optimize, add features, etc.
 
                 // Run the game in the main UI thread
                 runOnUiThread(() -> runGame());
