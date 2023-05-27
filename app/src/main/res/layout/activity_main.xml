@@ -2,86 +2,109 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/mainLayout"
+    android:id="@+id/gameFrameLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/bg"
+    android:background="@drawable/platformwithbg"
     tools:context=".MainActivity">
 
-    <FrameLayout
-        android:id="@+id/gameFrameLayout"
-        android:layout_width="410dp"
-        android:layout_height="528dp"
-        app:layout_constraintBottom_toTopOf="@+id/controlButtons"
+    <ImageView
+        android:id="@+id/gameover"
+        android:layout_width="299dp"
+        android:layout_height="428dp"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.003">
+        app:layout_constraintVertical_bias="0.359"
+        app:srcCompat="@drawable/gameover" />
 
-        <ImageView
-            android:id="@+id/gameover"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:visibility="invisible"
-            app:srcCompat="@drawable/gameover" />
+    <TextView
+        android:id="@+id/levelDisplay"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:alpha="0"
+        android:backgroundTint="@color/gameover"
+        android:clickable="false"
+        android:gravity="center_horizontal|center_vertical"
+        android:text="@string/level"
+        android:textAlignment="center"
+        android:textAllCaps="true"
+        android:textColor="@color/gameover"
+        android:textSize="48sp"
+        android:textStyle="bold"
+        android:visibility="visible"
+        app:autoSizeTextType="uniform"
+        app:layout_constraintBottom_toTopOf="@+id/platform"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-        <ImageView
-            android:id="@+id/ground"
-            android:layout_width="match_parent"
-            android:layout_height="68dp"
-            android:layout_gravity="bottom"
-            android:contentDescription="@string/groundDesc"
-            android:scaleType="centerCrop" />
+    <TextView
+        android:id="@+id/levelText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/level"
+        android:textAlignment="viewEnd"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.977"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-        <ImageView
-            android:id="@+id/player"
-            android:layout_width="52dp"
-            android:layout_height="85dp"
-            android:scaleType="centerCrop"
-            android:visibility="visible"
-            app:srcCompat="@drawable/jarl_idle_right" />
+    <ImageView
+        android:id="@+id/platform"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:contentDescription="@string/groundDesc"
+        android:scaleType="centerCrop"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.593" />
 
-        <TextView
-            android:id="@+id/scoreText"
-            android:layout_width="184dp"
-            android:layout_height="37dp"
-            android:text="@string/score"
-            android:textSize="20sp" />
+    <com.example.finalproject.Player
+        android:id="@+id/player"
+        android:layout_width="55dp"
+        android:layout_height="85dp"
+        android:scaleType="centerCrop"
+        app:layout_constraintBottom_toTopOf="@+id/platform"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:srcCompat="@drawable/jarl_idle_right" />
 
-        <TextView
-            android:id="@+id/levelText"
-            android:layout_width="184dp"
-            android:layout_height="37dp"
-            android:layout_gravity="end"
-            android:text="@string/level"
-            android:textAlignment="viewEnd"
-            android:textSize="20sp" />
+    <ImageView
+        android:id="@+id/player_old"
+        android:layout_width="55dp"
+        android:layout_height="85dp"
+        android:contentDescription="old player"
+        android:scaleType="centerCrop"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toTopOf="@+id/platform"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:srcCompat="@drawable/jarl_idle_right" />
 
-        <TextView
-            android:id="@+id/levelDisplay"
-            android:layout_width="366dp"
-            android:layout_height="76dp"
-            android:layout_gravity="center_horizontal|center_vertical"
-            android:alpha="0"
-            android:backgroundTint="@color/gameover"
-            android:clickable="false"
-            android:gravity="center_horizontal|center_vertical"
-            android:text="@string/level"
-            android:textAlignment="center"
-            android:textColor="@color/gameover"
-            android:textSize="48sp"
-            android:textStyle="bold"
-            android:visibility="visible"
-            app:autoSizeTextType="uniform" />
-
-    </FrameLayout>
+    <TextView
+        android:id="@+id/scoreText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/score"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <LinearLayout
         android:id="@+id/controlButtons"
-        android:layout_width="409dp"
-        android:layout_height="79dp"
-        android:layout_marginBottom="4dp"
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:layout_gravity="bottom|clip_horizontal|clip_vertical"
         android:gravity="center"
         android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -97,7 +120,7 @@
 
         <Button
             android:id="@+id/restartButton"
-            android:layout_width="130dp"
+            android:layout_width="131dp"
             android:layout_height="match_parent"
             android:text="@string/restart"
             android:visibility="invisible" />

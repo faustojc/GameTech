@@ -2,8 +2,12 @@ package com.example.finalproject;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.Path;
 import android.graphics.RectF;
-import android.view.ViewGroup;
+import android.util.AttributeSet;
 import android.widget.ImageView;
 
 @SuppressLint("AppCompatCustomView")
@@ -12,59 +16,64 @@ public class Player extends ImageView {
     public static final int DIRECTION_LEFT = 1;
     public static final int DIRECTION_RIGHT = 2;
 
-    private final ViewGroup.LayoutParams gameFrameLayout;
-    private final ViewGroup.LayoutParams groundLayoutParams;
+    private RectF gameLayoutBounds = new RectF();
     private final RectF bounds;
+    private final float speed = 20f;
+
     private int currDirection = DIRECTION_NONE;
     private int prevDirection = DIRECTION_NONE;
-    private final float speed = 20f;
+    private float originalPosX = 0f;
 
     public Player(Context context) {
         super(context);
-        gameFrameLayout = null;
-        groundLayoutParams = null;
-        bounds = null;
+        bounds = new RectF();
     }
 
-    public Player(Context context, ViewGroup.LayoutParams gameFrameLayout, ViewGroup.LayoutParams groundLayoutParams,ImageView source) {
-        super(context);
-        this.gameFrameLayout = gameFrameLayout;
-        this.groundLayoutParams = groundLayoutParams;
-
-        setLayoutParams(source.getLayoutParams());
-
-        setX(groundLayoutParams.width / 2f);
-        setY((float) gameFrameLayout.height - (float) groundLayoutParams.height - source.getLayoutParams().height);
-
-        bounds = new RectF(source.getDrawable().getBounds());
-        getImageMatrix().mapRect(bounds);
-        bounds.round(source.getDrawable().getBounds());
-
-        bounds.set(getX(), getY(), getX() + getLayoutParams().width, getY() + getLayoutParams().height);
+    public Player(Context context, AttributeSet attrs) {
+        super(context, attrs);
+        bounds = new RectF();
     }
 
-    public float moveLeft() {
+    public Player(Context context, AttributeSet attrs, int defStyle) {
+        super(context, attrs, defStyle);
+        bounds = new RectF();
+    }
+
+    @Override
+    protected void onDraw(Canvas canvas) {
+        super.onDraw(canvas);
+
+        Paint paint = new Paint();
+        Path path = new Path();
+
+        paint.setColor(Color.GREEN);
+        paint.setStyle(Paint.Style.STROKE);
+        paint.setStrokeWidth(7);
+
+        path.addRect(bounds, Path.Direction.CW);
+
+        canvas.clipPath(path);
+        canvas.drawPath(path, paint);
+    }
+
+    public void moveLeft() {
         setX(getX() - speed);
 
         if (getX() < 0) {
             setX(0);
         }
 
-        bounds.set(getX(), getY(), getX() + getLayoutParams().width, getY() + getLayoutParams().height);
-
-        return getX();
+        bounds.set(getX(), getY(), getX() + getWidth(), getY() + getHeight());
     }
 
-    public float moveRight() {
+    public void moveRight() {
         setX(getX() + speed);
 
-        if (getX() > gameFrameLayout.width - getLayoutParams().width) {
-            setX((float) gameFrameLayout.width - getLayoutParams().width);
+        if (getX() > gameLayoutBounds.width() - bounds.width()) {
+            setX(gameLayoutBounds.width() - bounds.width());
         }
 
-        bounds.set(getX(), getY(), getX() + getLayoutParams().width, getY() + getLayoutParams().height);
-
-        return getX();
+        bounds.set(getX(), getY(), getX() + getWidth(), getY() + getHeight());
     }
 
     public void setCurrDirection(int currDirection) {
@@ -87,9 +96,16 @@ public class Player extends ImageView {
         return prevDirection;
     }
 
-    public void resetPosition() {
-        setX(groundLayoutParams.width / 2f);
+    public void setParentBounds(RectF gameLayoutBounds) {
+        this.gameLayoutBounds = gameLayoutBounds;
+    }
 
-        bounds.set(getX(), getY(), getX() + getLayoutParams().width, getY() + getLayoutParams().height);
+    public void setOriginalPosX(float originalPosX) {
+        this.originalPosX = originalPosX;
+    }
+
+    public void resetPosition() {
+        setX(originalPosX);
+        bounds.set(getX(), getY(), getX() + getWidth(), getY() + getHeight());
     }
 }
