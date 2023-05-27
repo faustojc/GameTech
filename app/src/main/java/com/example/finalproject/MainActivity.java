@@ -42,7 +42,6 @@ public class MainActivity extends AppCompatActivity {
 
     private Animation fadeIn = null;
     private Animation fadeOut = null;
-    private boolean isAnimating = false;
 
     private final ArrayList<Stone> spawnedStones = new ArrayList<>();
 
