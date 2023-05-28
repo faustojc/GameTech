@@ -6,4 +6,8 @@
     <string name="restart">RESTART</string>
     <string name="level">Level %1$d</string>
     <string name="score">Score: %1$d</string>
+    <string name="shield">Shield up</string>
+    <string name="speed">Speed up</string>
+    <string name="bomb">Bomber</string>
+    <string name="start">PRESS TO START</string>
 </resources>

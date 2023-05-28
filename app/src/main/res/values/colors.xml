@@ -8,4 +8,7 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="level">#40F889</color>
+    <color name="shield">#64D3FF</color>
+    <color name="speed">#CAFF38</color>
+    <color name="bomb">#FF0000</color>
 </resources>

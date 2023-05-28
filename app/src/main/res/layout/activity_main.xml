@@ -2,7 +2,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/gameFrameLayout"
+    android:id="@+id/gameLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/platformwithbg"
@@ -68,17 +68,6 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.593" />
 
-    <com.example.finalproject.Player
-        android:id="@+id/player"
-        android:layout_width="55dp"
-        android:layout_height="85dp"
-        android:scaleType="centerCrop"
-        android:visibility="visible"
-        app:layout_constraintBottom_toTopOf="@+id/platform"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:srcCompat="@drawable/jarl_idle_right" />
-
     <TextView
         android:id="@+id/scoreText"
         android:layout_width="wrap_content"
@@ -90,6 +79,30 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <com.example.finalproject.Player
+        android:id="@+id/player"
+        android:layout_width="55dp"
+        android:layout_height="85dp"
+        android:scaleType="centerCrop"
+        android:visibility="visible"
+        app:layout_constraintBottom_toTopOf="@+id/platform"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:srcCompat="@drawable/jarl_idle_right" />
+
+    <Button
+        android:id="@+id/restartButton"
+        android:layout_width="152dp"
+        android:layout_height="67dp"
+        android:text="@string/restart"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.379" />
 
     <LinearLayout
         android:id="@+id/controlButtons"
@@ -109,13 +122,6 @@
             android:contentDescription="@string/left_button"
             app:srcCompat="@android:drawable/ic_media_rew" />
 
-        <Button
-            android:id="@+id/restartButton"
-            android:layout_width="131dp"
-            android:layout_height="match_parent"
-            android:text="@string/restart"
-            android:visibility="invisible" />
-
         <ImageButton
             android:id="@+id/leftButton"
             android:layout_width="130dp"
@@ -123,5 +129,97 @@
             android:contentDescription="@string/left_button"
             app:srcCompat="@android:drawable/ic_media_ff" />
     </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/powerupDisplayLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="28dp"
+        android:orientation="vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.978"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/levelText"></LinearLayout>
+
+    <TextView
+        android:id="@+id/shieldText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="328dp"
+        android:alpha="0"
+        android:text="@string/shield"
+        android:textAlignment="center"
+        android:textAllCaps="true"
+        android:textColor="@color/shield"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@+id/player"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/speedText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="256dp"
+        android:alpha="0"
+        android:text="@string/speed"
+        android:textAlignment="center"
+        android:textAllCaps="true"
+        android:textColor="@color/speed"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@+id/player"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/bombText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="292dp"
+        android:alpha="0"
+        android:text="@string/bomb"
+        android:textAlignment="center"
+        android:textAllCaps="true"
+        android:textColor="@color/bomb"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@+id/player"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <FrameLayout
+        android:id="@+id/startFrameLayout"
+        android:layout_width="354dp"
+        android:layout_height="221dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.491"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.29">
+
+        <ImageButton
+            android:id="@+id/startButton"
+            android:layout_width="148dp"
+            android:layout_height="100dp"
+            android:layout_gravity="center"
+            app:srcCompat="@android:drawable/ic_media_play" />
+
+        <TextView
+            android:id="@+id/startText"
+            android:layout_width="282dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|center"
+            android:fontFamily="sans-serif-medium"
+            android:text="@string/start"
+            android:textAlignment="center"
+            android:textAllCaps="false"
+            android:textColor="@color/white"
+            android:textSize="34sp"
+            android:textStyle="bold" />
+    </FrameLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
