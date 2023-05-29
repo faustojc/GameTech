@@ -423,7 +423,6 @@ public class MainActivity extends AppCompatActivity {
         startPowerupAnimListener(bombText);
     }
 
-
     private void startPowerupAnimListener(TextView powerupTextView) {
         slideUp.setAnimationListener(new Animation.AnimationListener() {
             @Override
