@@ -121,24 +121,12 @@ public class Player extends ImageView {
         this.shieldText = shieldText;
     }
 
-    public TextView getShieldText() {
-        return shieldText;
-    }
-
     public void setSpeedText(TextView speedText) {
         this.speedText = speedText;
     }
 
-    public TextView getSpeedText() {
-        return speedText;
-    }
-
     public void setBombText(TextView bombText) {
         this.bombText = bombText;
-    }
-
-    public TextView getBombText() {
-        return bombText;
     }
 
     public void setParentBounds(RectF gameLayoutBounds) {
