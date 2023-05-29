@@ -39,7 +39,6 @@ public class MainActivity extends AppCompatActivity {
     private Player player = null;
     private ImageView platform = null;
     private TextView scoreText = null;
-    private TextView startText = null;
     private ImageView gameoverImageView = null;
     private TextView levelDisplay = null;
     private TextView levelText = null;
@@ -361,56 +360,69 @@ public class MainActivity extends AppCompatActivity {
             // Check if the powerups hit the player
             if (powerup.getBounds().intersect(player.getBounds())) {
                 if (powerup.getType() == Powerup.TYPE_SHIELD) {
-                    player.setShielded(true);
-                    player.getShieldEffectImageView().setVisibility(View.VISIBLE);
-                    player.getShieldEffectImageView().setRotation(player.getShieldEffectImageView().getRotation() + 6);
-
-                    if (shieldImageView.getParent() != null) {
-                        powerupDisplayLayout.removeView(shieldImageView);
-                    }
-                    powerupDisplayLayout.addView(shieldImageView);
-
-                    shieldText.startAnimation(slideUp);
-                    startPowerupAnimListener(shieldText);
-
-                    powerupHandler.postDelayed(() -> runOnUiThread(() -> {
-                        player.setShielded(false);
-                        player.getShieldEffectImageView().setVisibility(View.INVISIBLE);
-                        powerupDisplayLayout.removeView(shieldImageView);
-                    }), 3000);
+                    handleShieldPowerup();
                 }
                 else if (powerup.getType() == Powerup.TYPE_SPEED) {
-                    player.setSpeed(player.getSpeed() + 15);
-
-                    if (speedImageView.getParent() != null) {
-                        powerupDisplayLayout.removeView(speedImageView);
-                    }
-                    powerupDisplayLayout.addView(speedImageView);
-
-                    speedText.startAnimation(slideUp);
-                    startPowerupAnimListener(speedText);
-
-                    powerupHandler.postDelayed(() -> runOnUiThread(() -> {
-                        player.setSpeed(player.getSpeed() - 15);
-                        powerupDisplayLayout.removeView(speedImageView);
-                    }), 3000);
+                    handleSpeedPowerup();
                 }
                 else if (powerup.getType() == Powerup.TYPE_BOMB) {
-                    // Remove all stones
-                    Iterator<Stone> stoneIterator = spawnedStones.iterator();
-
-                    while (stoneIterator.hasNext()) {
-                        Stone stone = stoneIterator.next();
-                        gameLayout.removeView(stone);
-                        stoneIterator.remove();
-                    }
-
-                    bombText.startAnimation(slideUp);
-                    startPowerupAnimListener(bombText);
+                    handleBombPowerup();
                 }
             }
         }
     }
+
+    private void handleShieldPowerup() {
+        player.setShielded(true);
+        player.getShieldEffectImageView().setVisibility(View.VISIBLE);
+        player.getShieldEffectImageView().setRotation(player.getShieldEffectImageView().getRotation() + 6);
+
+        if (shieldImageView.getParent() != null) {
+            powerupDisplayLayout.removeView(shieldImageView);
+        }
+        powerupDisplayLayout.addView(shieldImageView);
+
+        shieldText.startAnimation(slideUp);
+        startPowerupAnimListener(shieldText);
+
+        powerupHandler.postDelayed(() -> runOnUiThread(() -> {
+            player.setShielded(false);
+            player.getShieldEffectImageView().setVisibility(View.INVISIBLE);
+            powerupDisplayLayout.removeView(shieldImageView);
+        }), 3000);
+    }
+
+    private void handleSpeedPowerup() {
+        player.setSpeed(player.getSpeed() + 15);
+
+        if (speedImageView.getParent() != null) {
+            powerupDisplayLayout.removeView(speedImageView);
+        }
+        powerupDisplayLayout.addView(speedImageView);
+
+        speedText.startAnimation(slideUp);
+        startPowerupAnimListener(speedText);
+
+        powerupHandler.postDelayed(() -> runOnUiThread(() -> {
+            player.setSpeed(player.getSpeed() - 15);
+            powerupDisplayLayout.removeView(speedImageView);
+        }), 3000);
+    }
+
+    private void handleBombPowerup() {
+        // Remove all stones
+        Iterator<Stone> stoneIterator = spawnedStones.iterator();
+
+        while (stoneIterator.hasNext()) {
+            Stone stone = stoneIterator.next();
+            gameLayout.removeView(stone);
+            stoneIterator.remove();
+        }
+
+        bombText.startAnimation(slideUp);
+        startPowerupAnimListener(bombText);
+    }
+
 
     private void startPowerupAnimListener(TextView powerupTextView) {
         slideUp.setAnimationListener(new Animation.AnimationListener() {
@@ -437,7 +449,6 @@ public class MainActivity extends AppCompatActivity {
         gameoverImageView = findViewById(R.id.gameover);
         levelDisplay = findViewById(R.id.levelDisplay);
         levelText = findViewById(R.id.levelText);
-        startText = findViewById(R.id.startText);
         shieldText = findViewById(R.id.shieldText);
         speedText = findViewById(R.id.speedText);
         bombText = findViewById(R.id.bombText);
@@ -519,32 +530,28 @@ public class MainActivity extends AppCompatActivity {
         });
 
         rightButton.setOnTouchListener((view, event) -> {
-            if (view.getId() == R.id.rightButton) {
-                if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                    rightButtonPressed = true;
-                    player.setCurrDirection(Player.DIRECTION_LEFT);
-                }
-                else if (event.getAction() == MotionEvent.ACTION_UP) {
-                    rightButtonPressed = false;
-                    player.setCurrDirection(Player.DIRECTION_NONE);
-                    player.setPrevDirection(Player.DIRECTION_LEFT);
-                }
+            if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                rightButtonPressed = true;
+                player.setCurrDirection(Player.DIRECTION_LEFT);
+            }
+            else if (event.getAction() == MotionEvent.ACTION_UP) {
+                rightButtonPressed = false;
+                player.setCurrDirection(Player.DIRECTION_NONE);
+                player.setPrevDirection(Player.DIRECTION_LEFT);
             }
 
             return false;
         });
 
         leftButton.setOnTouchListener((view, event) -> {
-            if (view.getId() == R.id.leftButton) {
-                if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                    leftButtonPressed = true;
-                    player.setCurrDirection(Player.DIRECTION_RIGHT);
-                }
-                else if (event.getAction() == MotionEvent.ACTION_UP) {
-                    leftButtonPressed = false;
-                    player.setCurrDirection(Player.DIRECTION_NONE);
-                    player.setPrevDirection(Player.DIRECTION_RIGHT);
-                }
+            if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                leftButtonPressed = true;
+                player.setCurrDirection(Player.DIRECTION_RIGHT);
+            }
+            else if (event.getAction() == MotionEvent.ACTION_UP) {
+                leftButtonPressed = false;
+                player.setCurrDirection(Player.DIRECTION_NONE);
+                player.setPrevDirection(Player.DIRECTION_RIGHT);
             }
 
             return false;
